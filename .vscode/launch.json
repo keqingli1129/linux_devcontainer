@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": false,
-      "cwd": "/workspaces/linux_devcontainer/Chapter01",
-      "program": "/workspaces/linux_devcontainer/Chapter01/build/Debug/outDebug",
+      "cwd": "/workspaces/linux_devcontainer",
+      "program": "/workspaces/linux_devcontainer/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [
