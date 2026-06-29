@@ -8,7 +8,10 @@ int main() {
     int32_t a = 10;
     auto b = 20.0F;
     printer(a);
-
+    const auto c = 10;
+    constexpr auto e = 10;
+    constexpr auto len = 5U;
+    uint32_t myarray[len] = {0};
     // Eigen sample: 2x2 matrix multiplication
     Eigen::Matrix2d mat;
     mat << 1, 2,
