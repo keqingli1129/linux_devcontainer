@@ -15,4 +15,5 @@ RUN if [ "${REINSTALL_CMAKE_VERSION_FROM_SOURCE}" != "none" ]; then \
 
 # [Optional] Uncomment this section to install additional packages.
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
-    && apt-get -y install --no-install-recommends libopencv-dev
+    && apt-get -y install --no-install-recommends libopencv-dev \
+    x11-apps libgtk-3-dev

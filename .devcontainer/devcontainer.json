@@ -12,8 +12,13 @@
 		"--device=/dev/video1:/dev/video1",
 		"--device=/dev/video2:/dev/video2",
 		"--device=/dev/video3:/dev/video3",
-		"--group-add=video"
+		"--group-add=video",
+		"--net=host"
 	],
+
+	"containerEnv": {
+		"DISPLAY": ":0"
+	},
 
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	// "features": {},
@@ -28,7 +33,9 @@
 	"customizations": {
 		"vscode": {
 			"extensions": [
-				"anthropic.claude-code"
+				"anthropic.claude-code",
+				"ms-vscode.cpptools",
+				"ms-vscode.cmake-tools"
 			]
 		}
 	},

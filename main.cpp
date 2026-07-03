@@ -1,6 +1,7 @@
 #include<iostream>
 #include "Chapter01/Lib/lib.h"
 #include <Eigen/Dense>
+#include <opencv2/opencv.hpp>
 
 using namespace std;
 int main() {
@@ -21,6 +22,47 @@ int main() {
     cout << "Matrix:\n" << mat << endl;
     cout << "Vector: " << vec.transpose() << endl;
     cout << "Result: " << result.transpose() << endl;
+
+    // OpenCV: open camera and display feed
+    cv::VideoCapture cap;
+    cap.open(0, cv::CAP_V4L2);
+    if (!cap.isOpened()) {
+        cerr << "Error: Could not open camera" << endl;
+        return 1;
+    }
+
+    // Set a common resolution and format
+    cap.set(cv::CAP_PROP_FRAME_WIDTH, 640);
+    cap.set(cv::CAP_PROP_FRAME_HEIGHT, 480);
+    cap.set(cv::CAP_PROP_FOURCC, cv::VideoWriter::fourcc('M','J','P','G'));
+
+    // Warm up: discard initial frames
+    cv::Mat frame;
+    for (int i = 0; i < 10; i++) {
+        cap.read(frame);
+    }
+
+    cout << "Camera opened. Press 'q' to quit." << endl;
+
+    int emptyCount = 0;
+    while (true) {
+        if (!cap.read(frame) || frame.empty()) {
+            emptyCount++;
+            cerr << "Warning: Empty frame (" << emptyCount << ")" << endl;
+            if (emptyCount > 30) {
+                cerr << "Too many empty frames, exiting." << endl;
+                break;
+            }
+            continue;
+        }
+        emptyCount = 0;
+        cv::imshow("Camera", frame);
+        if (cv::waitKey(1) == 'q') {
+            break;
+        }
+    }
+    cap.release();
+    cv::destroyAllWindows();
 
     return 0;
 }
