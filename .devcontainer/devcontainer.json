@@ -12,8 +12,14 @@
 		"--device=/dev/video1:/dev/video1",
 		"--device=/dev/video2:/dev/video2",
 		"--device=/dev/video3:/dev/video3",
-		"--group-add=video"
+		"--group-add=video",
+		"--gpus=all"
 	],
+
+	// Requests a GPU when the container is created (e.g. via Codespaces or devcontainer CLI).
+	"hostRequirements": {
+		"gpu": true
+	},
 
 	"containerEnv": {
 		"DISPLAY": "host.docker.internal:0"
