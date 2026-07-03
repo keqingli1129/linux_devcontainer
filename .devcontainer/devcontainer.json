@@ -12,12 +12,11 @@
 		"--device=/dev/video1:/dev/video1",
 		"--device=/dev/video2:/dev/video2",
 		"--device=/dev/video3:/dev/video3",
-		"--group-add=video",
-		"--net=host"
+		"--group-add=video"
 	],
 
 	"containerEnv": {
-		"DISPLAY": ":0"
+		"DISPLAY": "host.docker.internal:0"
 	},
 
 	// Features to add to the dev container. More info: https://containers.dev/features.
