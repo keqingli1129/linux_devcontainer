@@ -3,20 +3,6 @@
 #include <iostream>
 #include <memory>
 
-ScopeTest::ScopeTest(int val) : m_val(val)
-{
-    std::cout << "Constructor: " << m_val << '\n';
-}
-
-ScopeTest::~ScopeTest()
-{
-    std::cout << "Destructor!\n";
-}
-void ScopeTest::test()
-{
-    std::cout << m_val << '\n';
-}
-
 void f1()
 {
     auto t = std::make_shared<ScopeTest>(10);
@@ -46,12 +32,3 @@ void f2()
     t5->m_partner = t4;
     std::cout << "Count t4: " << t4.use_count() << '\n';
 }
-
-// int main()
-// {
-//     f1();
-//     std::cout << '\n';
-//     f2();
-
-//     return 0;
-// }

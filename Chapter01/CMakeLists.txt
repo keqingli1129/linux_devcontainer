@@ -1,5 +1,6 @@
 add_library(Chapter01
     Lib/lib.cpp
+    Lib/ScopeTest.cpp
     Lib/shared.cpp
 )
 
