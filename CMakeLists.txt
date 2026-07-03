@@ -14,8 +14,8 @@ set(EIGEN_BUILD_DOC OFF)
 set(EIGEN_BUILD_TESTING OFF)
 set(BUILD_TESTING OFF)
 FetchContent_MakeAvailable(Eigen)
-
+find_package(OpenCV REQUIRED)
 add_subdirectory(Chapter01)
 
 add_executable(linux_devcontainer main.cpp)
-target_link_libraries(linux_devcontainer PRIVATE Chapter01 Eigen3::Eigen)
+target_link_libraries(linux_devcontainer PRIVATE Chapter01 Eigen3::Eigen ${OpenCV_LIBS})
