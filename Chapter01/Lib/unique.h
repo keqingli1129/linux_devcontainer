@@ -2,7 +2,7 @@
 
 #include "ScopeTest.h"
 
-namespace shared_demo
+namespace unique_demo
 {
     void f1();
     void f2();

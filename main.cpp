@@ -23,7 +23,7 @@ int main() {
     cout << "Matrix:\n" << mat << endl;
     cout << "Vector: " << vec.transpose() << endl;
     cout << "Result: " << result.transpose() << endl;
-    f1();
+    shared_demo::f1();
     // OpenCV: open camera and display feed
     // cv::VideoCapture cap;
     // cap.open(0, cv::CAP_V4L2);
