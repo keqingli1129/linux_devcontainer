@@ -4,7 +4,16 @@
 	"name": "C++",
 	"build": {
 		"dockerfile": "Dockerfile"
-	}
+	},
+
+	// Pass the WSL2-attached webcam through to the container.
+	"runArgs": [
+		"--device=/dev/video0:/dev/video0",
+		"--device=/dev/video1:/dev/video1",
+		"--device=/dev/video2:/dev/video2",
+		"--device=/dev/video3:/dev/video3",
+		"--group-add=video"
+	]
 
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	// "features": {},
