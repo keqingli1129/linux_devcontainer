@@ -15,6 +15,7 @@ set(EIGEN_BUILD_TESTING OFF)
 set(BUILD_TESTING OFF)
 FetchContent_MakeAvailable(Eigen)
 find_package(OpenCV REQUIRED)
+set(USE_SYSTEM_NVTX ON CACHE BOOL "Use system NVTX for libtorch")
 find_package(Torch REQUIRED PATHS /opt/libtorch NO_DEFAULT_PATH)
 add_subdirectory(Chapter01)
 
