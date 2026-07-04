@@ -3,6 +3,7 @@
 #include <Eigen/Dense>
 #include <opencv2/opencv.hpp>
 #include "Chapter01/Lib/shared.h"
+#include <torch/torch.h>
 
 using namespace std;
 int main() {
@@ -24,6 +25,26 @@ int main() {
     cout << "Vector: " << vec.transpose() << endl;
     cout << "Result: " << result.transpose() << endl;
     shared_demo::f1();
+
+    // LibTorch sample: tensor operations
+    cout << "\n--- LibTorch Test ---" << endl;
+    auto tensor_a = torch::ones({2, 3});
+    cout << "ones(2,3):\n" << tensor_a << endl;
+
+    auto tensor_b = torch::randn({2, 3});
+    cout << "randn(2,3):\n" << tensor_b << endl;
+
+    auto tensor_sum = tensor_a + tensor_b;
+    cout << "sum:\n" << tensor_sum << endl;
+
+    // Matrix multiply: (2x3) @ (3x2) -> (2x2)
+    auto tensor_mm = torch::mm(tensor_a, tensor_b.t());
+    cout << "matmul:\n" << tensor_mm << endl;
+
+    // Check CUDA availability
+    cout << "CUDA available: " << (torch::cuda::is_available() ? "yes" : "no") << endl;
+    cout << "--- LibTorch OK ---\n" << endl;
+
     // OpenCV: open camera and display feed
     cv::VideoCapture cap;
     cap.open(0, cv::CAP_V4L2);
