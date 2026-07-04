@@ -25,6 +25,8 @@ RUN curl -fsSL https://developer.download.nvidia.com/compute/cuda/repos/ubuntu24
     && apt-get update && export DEBIAN_FRONTEND=noninteractive \
     && apt-get -y install --no-install-recommends \
         cuda-toolkit-12-6 \
+        cudnn-jit \
+        cusparselt-cuda-12 \
     && rm -rf /var/lib/apt/lists/*
 
 ENV PATH="/usr/local/cuda-12.6/bin:${PATH}"

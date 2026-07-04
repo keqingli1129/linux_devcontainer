@@ -16,6 +16,8 @@ set(BUILD_TESTING OFF)
 FetchContent_MakeAvailable(Eigen)
 find_package(OpenCV REQUIRED)
 set(USE_SYSTEM_NVTX ON CACHE BOOL "Use system NVTX for libtorch")
+set(CAFFE2_USE_CUDNN ON CACHE BOOL "Enable cuDNN support")
+set(CAFFE2_USE_CUSPARSELT ON CACHE BOOL "Enable cuSPARSELt support")
 find_package(Torch REQUIRED PATHS /opt/libtorch NO_DEFAULT_PATH)
 add_subdirectory(Chapter01)
 
