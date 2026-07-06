@@ -19,8 +19,22 @@
 		"gpu": true
 	},
 
+	// WSLg puts its X11/Wayland sockets in the Ubuntu-24.04 WSL distro. VS Code runs on
+	// the Windows host, so Docker Desktop resolves plain Linux paths (/mnt/wslg) inside
+	// its own docker-desktop VM where they don't exist — reach the distro's files via the
+	// \\wsl.localhost UNC path instead. Update the distro name here if it changes.
+	"mounts": [
+		"source=\\\\wsl.localhost\\Ubuntu-24.04\\mnt\\wslg\\.X11-unix,target=/tmp/.X11-unix,type=bind",
+		"source=\\\\wsl.localhost\\Ubuntu-24.04\\mnt\\wslg,target=/mnt/wslg,type=bind"
+	],
+
+	// ${localEnv:...} resolves against the Windows environment (no DISPLAY etc. there),
+	// so hard-code the values WSLg uses inside the distro.
 	"containerEnv": {
-		"DISPLAY": "host.docker.internal:0"
+		"DISPLAY": ":0",
+		"WAYLAND_DISPLAY": "wayland-0",
+		"XDG_RUNTIME_DIR": "/mnt/wslg/runtime-dir",
+		"PULSE_SERVER": "/mnt/wslg/PulseServer"
 	},
 
 	// Features to add to the dev container. More info: https://containers.dev/features.
