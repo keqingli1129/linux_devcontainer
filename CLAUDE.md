@@ -4,21 +4,26 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-A C++ learning project organized into chapters (`Chapter01/`, ...), developed inside a Dev Container. There is currently no build system (no CMakeLists.txt or Makefile) — source files are compiled and run individually.
+A C++ learning project organized into chapters (`Chapter01/`, ...), developed inside a Dev Container. Built with CMake (presets in `CMakePresets.json`). Dependencies: Eigen (via FetchContent), OpenCV (system package), LibTorch with CUDA (unpacked at `/opt/libtorch` in the container image).
+
+## Building and running
+
+```bash
+cmake --preset debug          # configure into build/ (exports compile_commands.json)
+cmake --build --preset debug  # build all targets
+./build/Chapter01/ch01_basics # run a demo
+```
+
+Each chapter is a subdirectory with its own `CMakeLists.txt` contributing one small executable per demo (`ch01_basics`, `ch01_eigen`, `ch01_torch`, `ch01_camera`) plus an optional chapter library (`Chapter01` from `Chapter01/Lib/`). When adding a new lesson, add a new `chNN_<topic>.cpp` and `add_executable` entry rather than editing an existing demo.
+
+All project targets link `project_warnings` (an INTERFACE library defined in the top-level `CMakeLists.txt`) to get `-Wall -Wextra -Wpedantic -Wshadow`.
 
 ## Environment
 
 Development happens in a VS Code Dev Container defined in `.devcontainer/`:
-- Base image: `mcr.microsoft.com/devcontainers/cpp:2-ubuntu24.04` (GCC toolchain + vcpkg).
-- `reinstall-cmake.sh` builds CMake 3.22.2 from source at image build time (controlled by the `REINSTALL_CMAKE_VERSION_FROM_SOURCE` build arg).
-- The host is Windows, but compilation runs inside the Linux container — use the container's `g++`/`clang++`, not host tooling.
+- Base image: `mcr.microsoft.com/devcontainers/cpp:2-ubuntu24.04` (GCC toolchain + vcpkg), plus CUDA toolkit 12.6 and LibTorch installed by the Dockerfile.
+- The host is Windows (WSL2). Compilation runs inside the Linux container — use the container's toolchain, not host tooling.
+- `devcontainer.json` passes through the GPU (`--gpus=all`) and the WSL2-attached webcam (`/dev/video0`, `/dev/video1`); container creation fails if no webcam is attached via usbipd.
+- GUI output (`cv::imshow`) uses X11 via the `DISPLAY` env var set in `devcontainer.json`.
 
-## Building and running
-
-No project-wide build. Compile and run a single source file directly, e.g.:
-
-```bash
-g++ -std=c++17 Chapter01/Main.cc -o Main && ./Main
-```
-
-When introducing a build system or multi-file targets, prefer CMake (already available in the container via vcpkg) over ad-hoc compile commands.
+`ch01_camera` needs the webcam and an X display, so it can't be exercised headlessly; verify camera changes by building only.

@@ -1,7 +1,14 @@
-cmake_minimum_required(VERSION 3.10.0)
+cmake_minimum_required(VERSION 3.18.0)
 project(linux_devcontainer VERSION 0.1.0 LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+# Warnings for project targets only; third-party/imported targets are unaffected.
+add_library(project_warnings INTERFACE)
+target_compile_options(project_warnings INTERFACE -Wall -Wextra -Wpedantic -Wshadow)
 
 include(FetchContent)
 FetchContent_Declare(
@@ -14,12 +21,12 @@ set(EIGEN_BUILD_DOC OFF)
 set(EIGEN_BUILD_TESTING OFF)
 set(BUILD_TESTING OFF)
 FetchContent_MakeAvailable(Eigen)
+
 find_package(OpenCV REQUIRED)
+
 set(USE_SYSTEM_NVTX ON CACHE BOOL "Use system NVTX for libtorch")
 set(CAFFE2_USE_CUDNN ON CACHE BOOL "Enable cuDNN support")
 set(CAFFE2_USE_CUSPARSELT ON CACHE BOOL "Enable cuSPARSELt support")
 find_package(Torch REQUIRED PATHS /opt/libtorch NO_DEFAULT_PATH)
-add_subdirectory(Chapter01)
 
-add_executable(linux_devcontainer main.cpp)
-target_link_libraries(linux_devcontainer PRIVATE Chapter01 Eigen3::Eigen ${OpenCV_LIBS} ${TORCH_LIBRARIES})
+add_subdirectory(Chapter01)
