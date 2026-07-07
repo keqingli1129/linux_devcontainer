@@ -1,8 +1,8 @@
 add_library(Chapter01
-    Lib/lib.cpp
-    Lib/ScopeTest.cpp
-    Lib/shared.cpp
-    Lib/unique.cpp
+    Lib/basics/lib.cpp
+    Lib/memory/ScopeTest.cpp
+    Lib/memory/shared.cpp
+    Lib/memory/unique.cpp
 )
 target_include_directories(Chapter01 PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(Chapter01 PRIVATE project_warnings)

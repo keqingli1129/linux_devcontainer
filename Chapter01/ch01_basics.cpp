@@ -3,9 +3,9 @@
 #include <string>
 #include <vector>
 
-#include "Lib/lib.h"
-#include "Lib/shared.h"
-#include "Lib/unique.h"
+#include "Lib/basics/lib.h"
+#include "Lib/memory/shared.h"
+#include "Lib/memory/unique.h"
 
 int main() {
     std::cout << "Hello, World!" << std::endl;
