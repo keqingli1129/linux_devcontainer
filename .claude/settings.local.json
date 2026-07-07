@@ -3,7 +3,8 @@
     "allow": [
       "Bash(nvidia-smi)",
       "Read(//usr/lib/wsl/**)",
-      "Bash(docker info *)"
+      "Bash(docker info *)",
+      "Bash(cmake --preset debug)"
     ]
   }
 }
