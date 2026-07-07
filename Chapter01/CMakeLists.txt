@@ -1,11 +1,18 @@
 add_library(Chapter01
-    Lib/basics/lib.cpp
-    Lib/memory/ScopeTest.cpp
-    Lib/memory/shared.cpp
-    Lib/memory/unique.cpp
+    src/basics/lib.cpp
+    src/memory/ScopeTest.cpp
+    src/memory/shared.cpp
+    src/memory/unique.cpp
+    src/demos.cpp
 )
-target_include_directories(Chapter01 PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(Chapter01
+    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
+    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src
+)
 target_link_libraries(Chapter01 PRIVATE project_warnings)
+
+install(TARGETS Chapter01)
+install(DIRECTORY include/ DESTINATION include)
 
 # One small executable per demo, so every lesson stays runnable.
 add_executable(ch01_basics ch01_basics.cpp)

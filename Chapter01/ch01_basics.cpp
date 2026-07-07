@@ -3,9 +3,8 @@
 #include <string>
 #include <vector>
 
-#include "Lib/basics/lib.h"
-#include "Lib/memory/shared.h"
-#include "Lib/memory/unique.h"
+#include "Chapter01/basics/lib.h"
+#include "Chapter01/demos.h"
 
 int main() {
     std::cout << "Hello, World!" << std::endl;
@@ -25,7 +24,7 @@ int main() {
     }
     std::cout << std::endl;
 
-    shared_demo::f1();
-    unique_demo::f1();
+    chapter01_demos::run_shared_ptr_demo();
+    chapter01_demos::run_unique_ptr_demo();
     return 0;
 }
