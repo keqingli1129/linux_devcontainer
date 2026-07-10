@@ -1,0 +1,40 @@
+// Variant of ../devcontainer.json for a native Linux host reached over plain SSH
+// (no WSL2/Docker Desktop, no WSLg). Reuses the same Dockerfile.
+{
+	"name": "C++ (Linux/SSH)",
+	"build": {
+		"dockerfile": "../Dockerfile",
+		"context": ".."
+	},
+
+	"runArgs": [
+		"--gpus=all"
+		// No webcam device passthrough here: this host has no /dev/video*.
+		// If a real USB webcam is later attached, add:
+		// "--device=/dev/video0:/dev/video0", "--group-add=video"
+	],
+
+	"hostRequirements": {
+		"gpu": true
+	},
+
+	// Bind the host's real X11 socket (as opposed to the WSLg UNC paths in
+	// ../devcontainer.json) so cv::imshow works if you connect with `ssh -X`.
+	"mounts": [
+		"source=/tmp/.X11-unix,target=/tmp/.X11-unix,type=bind"
+	],
+
+	"containerEnv": {
+		"DISPLAY": "${localEnv:DISPLAY}"
+	},
+
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"anthropic.claude-code",
+				"ms-vscode.cpptools",
+				"ms-vscode.cmake-tools"
+			]
+		}
+	}
+}
