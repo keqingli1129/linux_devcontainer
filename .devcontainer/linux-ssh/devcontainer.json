@@ -8,24 +8,32 @@
 	},
 
 	"runArgs": [
-		"--gpus=all"
-		// No webcam device passthrough here: this host has no /dev/video*.
-		// If a real USB webcam is later attached, add:
-		// "--device=/dev/video0:/dev/video0", "--group-add=video"
+		"--gpus=all",
+		"--device=/dev/video0:/dev/video0",
+		"--group-add=video",
+		// VS Code Remote-SSH's own X11 forwarding binds a TCP listener to
+		// 127.0.0.1 on the remote host (it does not create a
+		// /tmp/.X11-unix socket). The container's default bridge network
+		// has its own loopback, so that port is unreachable unless the
+		// container shares the host's network namespace.
+		"--network=host"
 	],
 
 	"hostRequirements": {
 		"gpu": true
 	},
 
-	// Bind the host's real X11 socket (as opposed to the WSLg UNC paths in
-	// ../devcontainer.json) so cv::imshow works if you connect with `ssh -X`.
+	// sshd writes the X11 forwarding auth cookie into the SSH login user's
+	// ~/.Xauthority on the host. --network=host gives the container
+	// reachability to the forwarded TCP port, but not this file, so X
+	// clients fail auth ("Can't open display") without it mounted in too.
 	"mounts": [
-		"source=/tmp/.X11-unix,target=/tmp/.X11-unix,type=bind"
+		"source=${localEnv:HOME}/.Xauthority,target=/home/vscode/.Xauthority,type=bind"
 	],
 
 	"containerEnv": {
-		"DISPLAY": "${localEnv:DISPLAY}"
+		"DISPLAY": "${localEnv:DISPLAY}",
+		"XAUTHORITY": "/home/vscode/.Xauthority"
 	},
 
 	"customizations": {
