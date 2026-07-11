@@ -48,8 +48,8 @@ int main() {
         }
         cv::circle(frame, samplePoint, 5, cv::Scalar(0), cv::FILLED);
         cv::imshow("Camera", frame);
-        cv::imshow("HSV", hsv);
-        cv::imshow("Mask", mask);
+        //cv::imshow("HSV", hsv);
+        //cv::imshow("Mask", mask);
         if (cv::waitKey(1) == 'q') {
             break;
         }
