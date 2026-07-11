@@ -41,3 +41,12 @@ RUN curl -fsSL "https://download.pytorch.org/libtorch/${LIBTORCH_CUDA}/libtorch-
     && rm /tmp/libtorch.zip
 
 ENV CMAKE_PREFIX_PATH="/opt/libtorch"
+
+# Open3D (prebuilt devel package, CUDA build, cxx11 ABI to match LibTorch above).
+ARG OPEN3D_VERSION="0.19.0"
+RUN curl -fsSL "https://github.com/isl-org/Open3D/releases/download/v${OPEN3D_VERSION}/open3d-devel-linux-x86_64-cxx11-abi-cuda-${OPEN3D_VERSION}.tar.xz" -o /tmp/open3d.tar.xz \
+    && mkdir -p /opt/open3d \
+    && tar -xJf /tmp/open3d.tar.xz -C /opt/open3d --strip-components=1 \
+    && rm /tmp/open3d.tar.xz
+
+ENV CMAKE_PREFIX_PATH="/opt/libtorch:/opt/open3d"

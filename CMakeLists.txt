@@ -35,6 +35,8 @@ set(CAFFE2_USE_CUDNN ON CACHE BOOL "Enable cuDNN support")
 set(CAFFE2_USE_CUSPARSELT ON CACHE BOOL "Enable cuSPARSELt support")
 find_package(Torch REQUIRED PATHS /opt/libtorch NO_DEFAULT_PATH)
 
+find_package(Open3D REQUIRED PATHS /opt/open3d NO_DEFAULT_PATH)
+
 add_subdirectory(Chapter01)
 
 # `cpack --config build/CPackConfig.cmake` bundles the install() rules above

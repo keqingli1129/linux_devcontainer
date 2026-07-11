@@ -26,5 +26,11 @@ int main() {
 
     chapter01_demos::run_shared_ptr_demo();
     chapter01_demos::run_unique_ptr_demo();
+    int my_variable;
+    {
+        float my_variable;
+    }
+
+
     return 0;
 }
