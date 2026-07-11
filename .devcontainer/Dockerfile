@@ -14,9 +14,12 @@ RUN if [ "${REINSTALL_CMAKE_VERSION_FROM_SOURCE}" != "none" ]; then \
 # RUN su vscode -c "${VCPKG_ROOT}/vcpkg install <your-port-name-here>"
 
 # [Optional] Uncomment this section to install additional packages.
+# libglu1-mesa-dev: GL/glu.h, required by Open3D's bundled GLEW headers.
+# libc++1/libc++abi1: the official Open3D prebuilt binary links libc++, not libstdc++.
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     && apt-get -y install --no-install-recommends libopencv-dev \
-    x11-apps libgtk-3-dev unzip \
+    x11-apps libgtk-3-dev unzip libglu1-mesa-dev \
+    libc++1 libc++abi1 \
     && rm -rf /var/lib/apt/lists/*
 
 # CUDA toolkit 12.6 – needed so CMake's TorchConfig can locate CUDA headers/libs.

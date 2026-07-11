@@ -2,7 +2,8 @@
 #include <iostream>
 #include <string>
 #include <vector>
-
+#include <array>
+#include <open3d/Open3D.h>
 #include "Chapter01/basics/lib.h"
 #include "Chapter01/demos.h"
 
@@ -26,11 +27,12 @@ int main() {
 
     chapter01_demos::run_shared_ptr_demo();
     chapter01_demos::run_unique_ptr_demo();
-    int my_variable;
-    {
-        float my_variable;
-    }
-
-
+    // int my_variable{0};
+    // {
+    //     float my_variable{0.0};
+    // }
+    std::array<float, 2> f_arr{1.0, 2.0};
+    std::cout << "Last element: " << f_arr.back() << std::endl;
+    open3d::geometry::PointCloud pc;
     return 0;
 }
