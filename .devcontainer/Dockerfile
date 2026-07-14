@@ -1,5 +1,12 @@
 FROM mcr.microsoft.com/devcontainers/cpp:2-ubuntu24.04
 
+# The FBISD network intercepts HTTPS and re-signs it with the district CA
+# (FBISD_PA_Trust), which the image doesn't trust — build-time downloads
+# (CUDA keyring, apt over HTTPS, LibTorch) fail without it. Harmless when
+# building off-network. Re-export from the Windows cert store if it rotates.
+COPY ./fbisd-pa-trust.crt /usr/local/share/ca-certificates/fbisd-pa-trust.crt
+RUN update-ca-certificates
+
 ARG REINSTALL_CMAKE_VERSION_FROM_SOURCE="none"
 
 # Optionally install the cmake for vcpkg
