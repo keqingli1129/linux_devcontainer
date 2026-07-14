@@ -41,7 +41,7 @@ install(EXPORT Chapter01Targets
 
 # One small executable per demo, so every lesson stays runnable.
 add_executable(ch01_basics ch01_basics.cpp)
-target_link_libraries(ch01_basics PRIVATE Chapter01 project_warnings)
+target_link_libraries(ch01_basics PRIVATE Chapter01 Open3D::Open3D project_warnings)
 
 add_executable(ch01_eigen ch01_eigen.cpp)
 target_link_libraries(ch01_eigen PRIVATE Eigen3::Eigen project_warnings)

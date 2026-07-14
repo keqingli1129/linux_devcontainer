@@ -21,9 +21,12 @@ RUN if [ "${REINSTALL_CMAKE_VERSION_FROM_SOURCE}" != "none" ]; then \
 # RUN su vscode -c "${VCPKG_ROOT}/vcpkg install <your-port-name-here>"
 
 # [Optional] Uncomment this section to install additional packages.
+# libglu1-mesa-dev: GL/glu.h, required by Open3D's bundled GLEW headers.
+# libc++1/libc++abi1: the official Open3D prebuilt binary links libc++, not libstdc++.
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     && apt-get -y install --no-install-recommends libopencv-dev \
-    x11-apps libgtk-3-dev unzip \
+    x11-apps libgtk-3-dev unzip libglu1-mesa-dev \
+    libc++1 libc++abi1 \
     && rm -rf /var/lib/apt/lists/*
 
 # CUDA toolkit 12.6 – needed so CMake's TorchConfig can locate CUDA headers/libs.
@@ -48,3 +51,12 @@ RUN curl -fsSL "https://download.pytorch.org/libtorch/${LIBTORCH_CUDA}/libtorch-
     && rm /tmp/libtorch.zip
 
 ENV CMAKE_PREFIX_PATH="/opt/libtorch"
+
+# Open3D (prebuilt devel package, CUDA build, cxx11 ABI to match LibTorch above).
+ARG OPEN3D_VERSION="0.19.0"
+RUN curl -fsSL "https://github.com/isl-org/Open3D/releases/download/v${OPEN3D_VERSION}/open3d-devel-linux-x86_64-cxx11-abi-cuda-${OPEN3D_VERSION}.tar.xz" -o /tmp/open3d.tar.xz \
+    && mkdir -p /opt/open3d \
+    && tar -xJf /tmp/open3d.tar.xz -C /opt/open3d --strip-components=1 \
+    && rm /tmp/open3d.tar.xz
+
+ENV CMAKE_PREFIX_PATH="/opt/libtorch:/opt/open3d"

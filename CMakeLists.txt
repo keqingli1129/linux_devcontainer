@@ -23,9 +23,9 @@ FetchContent_Declare(
     GIT_SHALLOW TRUE
     EXCLUDE_FROM_ALL
 )
-set(EIGEN_BUILD_DOC OFF)
-set(EIGEN_BUILD_TESTING OFF)
-set(BUILD_TESTING OFF)
+set(EIGEN_BUILD_DOC OFF CACHE BOOL "" FORCE)
+set(EIGEN_BUILD_TESTING OFF CACHE BOOL "" FORCE)
+set(BUILD_TESTING OFF CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(Eigen)
 
 find_package(OpenCV REQUIRED)
@@ -34,6 +34,8 @@ set(USE_SYSTEM_NVTX ON CACHE BOOL "Use system NVTX for libtorch")
 set(CAFFE2_USE_CUDNN ON CACHE BOOL "Enable cuDNN support")
 set(CAFFE2_USE_CUSPARSELT ON CACHE BOOL "Enable cuSPARSELt support")
 find_package(Torch REQUIRED PATHS /opt/libtorch NO_DEFAULT_PATH)
+
+find_package(Open3D REQUIRED PATHS /opt/open3d NO_DEFAULT_PATH)
 
 add_subdirectory(Chapter01)
 
