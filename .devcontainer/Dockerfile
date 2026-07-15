@@ -60,3 +60,16 @@ RUN curl -fsSL "https://github.com/isl-org/Open3D/releases/download/v${OPEN3D_VE
     && rm /tmp/open3d.tar.xz
 
 ENV CMAKE_PREFIX_PATH="/opt/libtorch:/opt/open3d"
+
+# ROS 2 Jazzy (LTS for Ubuntu 24.04)
+RUN curl -fsSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key \
+        -o /usr/share/keyrings/ros-archive-keyring.gpg \
+    && echo "deb [arch=amd64 signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu noble main" \
+        > /etc/apt/sources.list.d/ros2.list \
+    && apt-get update && export DEBIAN_FRONTEND=noninteractive \
+    && apt-get -y install --no-install-recommends \
+        ros-jazzy-desktop \
+        ros-dev-tools \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN echo "source /opt/ros/jazzy/setup.bash" >> /home/vscode/.bashrc
