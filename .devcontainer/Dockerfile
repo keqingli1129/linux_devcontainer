@@ -75,3 +75,17 @@ RUN curl -fsSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key \
     && rm -rf /var/lib/apt/lists/*
 
 RUN echo "source /opt/ros/jazzy/setup.bash" >> /home/vscode/.bashrc
+
+# VirtualGL: Gazebo's Ogre2 renderer needs a real GL context, but the
+# linux-ssh devcontainer's DISPLAY is forwarded over the network (indirect
+# GLX), which NVIDIA's driver won't accelerate and which hangs Gazebo's
+# context setup. vglrun redirects the GL calls to the container's real GPU
+# and only streams finished frames to the forwarded X display.
+ARG VIRTUALGL_VERSION="3.1.4"
+RUN curl -fsSL "https://github.com/VirtualGL/virtualgl/releases/download/${VIRTUALGL_VERSION}/virtualgl_${VIRTUALGL_VERSION}_amd64.deb" \
+        -o /tmp/virtualgl.deb \
+    && apt-get update && export DEBIAN_FRONTEND=noninteractive \
+    && apt-get -y install --no-install-recommends /tmp/virtualgl.deb \
+    && rm -f /tmp/virtualgl.deb && rm -rf /var/lib/apt/lists/* \
+    && groupadd -r vglusers \
+    && usermod -aG vglusers vscode

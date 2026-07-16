@@ -37,6 +37,12 @@
 		"NVIDIA_DRIVER_CAPABILITIES": "all"
 	},
 
+	// VirtualGL's device permission grants (chown /dev/nvidia*, /dev/dri/*) need the
+	// actual GPU device nodes, which only exist once the container is running with
+	// --gpus=all — not at image build time. Runs on every start since it's idempotent
+	// and device nodes can be re-bound-mounted.
+	"postStartCommand": "sudo /usr/bin/vglserver_config -config -s -f -t",
+
 	"customizations": {
 		"vscode": {
 			"extensions": [
