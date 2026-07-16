@@ -29,23 +29,24 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     libc++1 libc++abi1 \
     && rm -rf /var/lib/apt/lists/*
 
-# CUDA toolkit 12.6 – needed so CMake's TorchConfig can locate CUDA headers/libs.
+# CUDA toolkit 12.8 – minimum required for native Blackwell (RTX 50-series) support.
+# Needed so CMake's TorchConfig can locate CUDA headers/libs.
 RUN curl -fsSL https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2404/x86_64/cuda-keyring_1.1-1_all.deb \
         -o /tmp/cuda-keyring.deb \
     && dpkg -i /tmp/cuda-keyring.deb && rm /tmp/cuda-keyring.deb \
     && apt-get update && export DEBIAN_FRONTEND=noninteractive \
     && apt-get -y install --no-install-recommends \
-        cuda-toolkit-12-6 \
+        cuda-toolkit-12-8 \
         cudnn-jit \
         cusparselt-cuda-12 \
     && rm -rf /var/lib/apt/lists/*
 
-ENV PATH="/usr/local/cuda-12.6/bin:${PATH}"
-ENV LD_LIBRARY_PATH="/usr/local/cuda-12.6/lib64:${LD_LIBRARY_PATH}"
+ENV PATH="/usr/local/cuda-12.8/bin:${PATH}"
+ENV LD_LIBRARY_PATH="/usr/local/cuda-12.8/lib64:${LD_LIBRARY_PATH}"
 
 # LibTorch (PyTorch C++ API), CUDA build.
 ARG LIBTORCH_VERSION="2.7.1"
-ARG LIBTORCH_CUDA="cu126"
+ARG LIBTORCH_CUDA="cu128"
 RUN curl -fsSL "https://download.pytorch.org/libtorch/${LIBTORCH_CUDA}/libtorch-cxx11-abi-shared-with-deps-${LIBTORCH_VERSION}%2B${LIBTORCH_CUDA}.zip" -o /tmp/libtorch.zip \
     && unzip -q /tmp/libtorch.zip -d /opt \
     && rm /tmp/libtorch.zip
@@ -70,6 +71,7 @@ RUN curl -fsSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key \
     && apt-get -y install --no-install-recommends \
         ros-jazzy-desktop \
         ros-dev-tools \
+        ros-jazzy-ros-gz \
     && rm -rf /var/lib/apt/lists/*
 
 RUN echo "source /opt/ros/jazzy/setup.bash" >> /home/vscode/.bashrc

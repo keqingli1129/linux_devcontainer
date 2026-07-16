@@ -33,7 +33,8 @@
 
 	"containerEnv": {
 		"DISPLAY": "${localEnv:DISPLAY}",
-		"XAUTHORITY": "/home/vscode/.Xauthority"
+		"XAUTHORITY": "/home/vscode/.Xauthority",
+		"NVIDIA_DRIVER_CAPABILITIES": "all"
 	},
 
 	"customizations": {
