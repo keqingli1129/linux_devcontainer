@@ -34,7 +34,14 @@
 	"containerEnv": {
 		"DISPLAY": "${localEnv:DISPLAY}",
 		"XAUTHORITY": "/home/vscode/.Xauthority",
-		"NVIDIA_DRIVER_CAPABILITIES": "all"
+		"NVIDIA_DRIVER_CAPABILITIES": "all",
+		// gz-transport (Gazebo's pub/sub layer) discovers peers over UDP
+		// multicast. --network=host puts that traffic on the host's real
+		// Wi-Fi interface, and multicast sent there doesn't loop back to the
+		// sending host itself — so the GUI process can never find the
+		// server process's topics. Pinning discovery to loopback fixes it,
+		// since server and GUI both run on this same machine.
+		"GZ_IP": "127.0.0.1"
 	},
 
 	// VirtualGL's device permission grants (chown /dev/nvidia*, /dev/dri/*) need the

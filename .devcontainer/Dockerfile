@@ -89,3 +89,20 @@ RUN curl -fsSL "https://github.com/VirtualGL/virtualgl/releases/download/${VIRTU
     && rm -f /tmp/virtualgl.deb && rm -rf /var/lib/apt/lists/* \
     && groupadd -r vglusers \
     && usermod -aG vglusers vscode
+
+# nvidia-container-toolkit mounts the driver's .so files at container start
+# (--gpus=all) but not a GLVND vendor manifest for them, so without this,
+# EGL_PLATFORM_DEVICE enumeration only finds Mesa's software EGL and Gazebo's
+# GL context silently falls back to CPU rendering (works, but far too slow —
+# reads as a hung/unresponsive window instead of an error).
+RUN mkdir -p /usr/share/glvnd/egl_vendor.d && \
+    printf '%s\n' \
+        '{' \
+        '    "file_format_version" : "1.0.0",' \
+        '    "ICD" : {' \
+        '        "library_path" : "libEGL_nvidia.so.0"' \
+        '    }' \
+        '}' > /usr/share/glvnd/egl_vendor.d/10_nvidia.json
+
+COPY ./gzrun.sh /usr/local/bin/gzrun
+RUN chmod +x /usr/local/bin/gzrun
