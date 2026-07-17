@@ -31,9 +31,27 @@
 		"source=${localEnv:HOME}/.Xauthority,target=/home/vscode/.Xauthority,type=bind"
 	],
 
+	// DISPLAY is hardcoded rather than "${localEnv:DISPLAY}" because that
+	// expression reads the env of the process that launched the VS Code
+	// Server on the SSH host, not the X11-forwarding-enabled shell you SSH'd
+	// in with — on this host that launcher process has no DISPLAY, so the
+	// substitution resolved to empty and every GUI app failed with "could not
+	// connect to display". The Dev Containers extension does its own X11
+	// forwarding independently of that: it proxies a display into the
+	// container as a real /tmp/.X11-unix/X<N> socket (see
+	// REMOTE_CONTAINERS_DISPLAY_SOCK for which N is current). It's usually
+	// ":0", but it isn't guaranteed — a stale socket left behind by a
+	// previous session can push it to ":1" (observed 2026-07-17). If GUI
+	// apps report opening the camera/window with no error but no window
+	// appears, check `echo $REMOTE_CONTAINERS_DISPLAY_SOCK` in a fresh
+	// terminal and update this value to match.
+	// XAUTHORITY still needs to be set explicitly to the mounted cookie file.
+	"remoteEnv": {
+		"DISPLAY": ":1",
+		"XAUTHORITY": "/home/vscode/.Xauthority"
+	},
+
 	"containerEnv": {
-		"DISPLAY": "${localEnv:DISPLAY}",
-		"XAUTHORITY": "/home/vscode/.Xauthority",
 		"NVIDIA_DRIVER_CAPABILITIES": "all",
 		// gz-transport (Gazebo's pub/sub layer) discovers peers over UDP
 		// multicast. --network=host puts that traffic on the host's real
