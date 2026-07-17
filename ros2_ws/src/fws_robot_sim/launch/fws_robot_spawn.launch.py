@@ -4,10 +4,9 @@ from pathlib import Path
 from ament_index_python.packages import get_package_share_directory
 
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, ExecuteProcess, IncludeLaunchDescription
+from launch.actions import DeclareLaunchArgument, ExecuteProcess
 from launch.actions import RegisterEventHandler, SetEnvironmentVariable
 from launch.event_handlers import OnProcessExit
-from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
@@ -38,16 +37,13 @@ def generate_launch_description():
            ]
     )
 
-    gazebo = IncludeLaunchDescription(
-                PythonLaunchDescriptionSource([os.path.join(
-                    get_package_share_directory('ros_gz_sim'), 'launch'), '/gz_sim.launch.py']),
-                launch_arguments=[
-                    ('gz_args', [LaunchConfiguration('world'),
-                                 '.sdf',
-                                 ' -v 4',
-                                 ' -r']
-                    )
-                ]
+    # ros_gz_sim's gz_sim.launch.py runs `gz sim` directly, which hangs under
+    # this devcontainer's forwarded (indirect-GLX) DISPLAY. Route it through
+    # the `gzrun` wrapper (vglrun) instead, same as running `gzrun` by hand.
+    gazebo = ExecuteProcess(
+                cmd=['gzrun', [LaunchConfiguration('world'), '.sdf'],
+                     '-v', '4', '-r'],
+                output='screen',
              )
 
     xacro_file = os.path.join(fws_robot_description_path,

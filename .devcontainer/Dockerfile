@@ -72,6 +72,10 @@ RUN curl -fsSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key \
         ros-jazzy-desktop \
         ros-dev-tools \
         ros-jazzy-ros-gz \
+        ros-jazzy-ros2-control \
+        ros-jazzy-ros2-controllers \
+        ros-jazzy-gz-ros2-control \
+        ros-jazzy-joint-state-publisher-gui \
     && rm -rf /var/lib/apt/lists/*
 
 RUN echo "source /opt/ros/jazzy/setup.bash" >> /home/vscode/.bashrc
