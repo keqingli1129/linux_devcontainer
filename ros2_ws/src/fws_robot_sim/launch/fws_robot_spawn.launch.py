@@ -1,5 +1,7 @@
 import os
+import tempfile
 import xacro
+import yaml
 from pathlib import Path
 from ament_index_python.packages import get_package_share_directory
 
@@ -18,7 +20,7 @@ def generate_launch_description():
 
     fws_robot_description_path = os.path.join(
         get_package_share_directory('fws_robot_description'))
-    
+
     fws_robot_sim_path = os.path.join(
         get_package_share_directory('fws_robot_sim'))
 
@@ -29,6 +31,11 @@ def generate_launch_description():
             os.path.join(fws_robot_sim_path, 'worlds'), ':' +
             str(Path(fws_robot_description_path).parent.resolve())
             ]
+        )
+
+    gazebo_plugin_path = SetEnvironmentVariable(
+        name='GZ_SIM_SYSTEM_PLUGIN_PATH',
+        value=['/opt/ros/jazzy/lib']
         )
 
     arguments = LaunchDescription([
@@ -54,8 +61,33 @@ def generate_launch_description():
 
     robot_desc = doc.toprettyxml(indent='  ')
 
+    # --- Workaround for controller_manager 4.45.2 bug ---
+    # The CM adds --params-file with an empty value to controller node args
+    # when <controller>.params_file is not set. Generate a patched YAML that
+    # includes params_file entries for each controller, then swap the path
+    # in the URDF so gz_ros2_control uses the patched file.
+    controller_params_file = os.path.join(
+        fws_robot_description_path, 'config', 'fws_robot_sim.yaml')
+
+    with open(controller_params_file) as f:
+        ctrl_params = yaml.safe_load(f)
+
+    cm_ros_params = ctrl_params['controller_manager']['ros__parameters']
+    for name in list(cm_ros_params.keys()):
+        if isinstance(cm_ros_params[name], dict) and 'type' in cm_ros_params[name]:
+            cm_ros_params[name]['params_file'] = controller_params_file
+
+    patched_params_fd, patched_params_file = tempfile.mkstemp(
+        suffix='.yaml', prefix='fws_ctrl_')
+    with os.fdopen(patched_params_fd, 'w') as f:
+        yaml.dump(ctrl_params, f, default_flow_style=False)
+
+    # Replace the original params path in the URDF so the gz_ros2_control
+    # plugin loads the patched file (which includes params_file entries).
+    robot_desc = robot_desc.replace(controller_params_file, patched_params_file)
+
     params = {'robot_description': robot_desc}
-    
+
     node_robot_state_publisher = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
@@ -78,21 +110,27 @@ def generate_launch_description():
                    '-allow_renaming', 'false'],
     )
 
-    load_joint_state_controller = ExecuteProcess(
-        cmd=['ros2', 'control', 'load_controller', '--set-state', 'active',
-             'joint_state_broadcaster'],
+    load_joint_state_controller = Node(
+        package='controller_manager',
+        executable='spawner',
+        arguments=['joint_state_broadcaster',
+                   '--param-file', controller_params_file],
         output='screen'
     )
 
-    load_forward_velocity_controller = ExecuteProcess(
-        cmd=['ros2', 'control', 'load_controller', '--set-state', 'active',
-             'forward_velocity_controller'],
+    load_forward_velocity_controller = Node(
+        package='controller_manager',
+        executable='spawner',
+        arguments=['forward_velocity_controller',
+                   '--param-file', controller_params_file],
         output='screen'
     )
 
-    load_forward_position_controller = ExecuteProcess(
-        cmd=['ros2', 'control', 'load_controller', '--set-state', 'active',
-             'forward_position_controller'],
+    load_forward_position_controller = Node(
+        package='controller_manager',
+        executable='spawner',
+        arguments=['forward_position_controller',
+                   '--param-file', controller_params_file],
         output='screen'
     )
 
@@ -100,7 +138,8 @@ def generate_launch_description():
     bridge = Node(
         package='ros_gz_bridge',
         executable='parameter_bridge',
-        arguments=['/scan@sensor_msgs/msg/LaserScan@gz.msgs.LaserScan'],
+        arguments=['/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock',
+                   '/scan@sensor_msgs/msg/LaserScan@gz.msgs.LaserScan'],
         output='screen'
     )
 
@@ -129,6 +168,7 @@ def generate_launch_description():
             )
         ),
         gazebo_resource_path,
+        gazebo_plugin_path,
         arguments,
         gazebo,
         node_robot_state_publisher,
